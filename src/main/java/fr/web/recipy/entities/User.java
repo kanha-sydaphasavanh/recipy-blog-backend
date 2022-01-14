@@ -19,9 +19,9 @@ public class User {
     private String fstName;
     @Column(nullable = false)
     private String lastName;
-    @Column(nullable = false)
+    @Column
     private LocalDate adhesionDate;
-    @Column(nullable = false)
+    @Column
     private Role role;
     @Column
     private String description;
