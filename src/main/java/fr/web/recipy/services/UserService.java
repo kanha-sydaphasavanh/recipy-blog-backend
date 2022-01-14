@@ -11,7 +11,10 @@ public interface UserService {
 
     UserDto findById(long id);
 
-    List<RecipeDto> findAllByAuthorId(long id);
-
     UserDto saveOrUpdate(UserDto userDto);
+
+    void deleteById(long id);
+
+    // User's recipes
+    List<RecipeDto> findAllByAuthorId(long id);
 }

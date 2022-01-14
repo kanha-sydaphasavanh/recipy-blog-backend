@@ -49,6 +49,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto saveOrUpdate(UserDto userDto) {
+        User user = DtoMapper.convert(userDto, User.class);
+        userRepository.save(user);
+        userDto = DtoMapper.convert(user, UserDto.class);
+        return userDto;
+    }
+
+    @Override
+    public void deleteById(long id) {
+        Optional<User> user = userRepository.findById(id);
+        user.get().setAdhesionDate(null);
+        userRepository.deleteById(id);
+    }
+
+    // User's recipes
+    @Override
     public List<RecipeDto> findAllByAuthorId(long id) {
         List<Recipe> recipeList = recipeRepository.findAllByAuthorId(id);
         List<RecipeDto> recipeDtoList = new ArrayList<>();
@@ -58,13 +74,5 @@ public class UserServiceImpl implements UserService {
         }
 
         return recipeDtoList;
-    }
-
-    @Override
-    public UserDto saveOrUpdate(UserDto userDto) {
-        User user = DtoMapper.convert(userDto, User.class);
-        userRepository.save(user);
-        userDto = DtoMapper.convert(user, UserDto.class);
-        return userDto;
     }
 }
