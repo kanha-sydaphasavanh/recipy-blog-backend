@@ -1,11 +1,10 @@
 package fr.web.recipy.services;
 
-import fr.web.recipy.dto.IngredientDto;
 import fr.web.recipy.dto.RecipeDto;
-import fr.web.recipy.entities.Ingredient;
 import fr.web.recipy.entities.Recipe;
 import fr.web.recipy.entities.User;
 import fr.web.recipy.repositories.RecipeRepository;
+import fr.web.recipy.repositories.UserRepository;
 import fr.web.recipy.tools.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Autowired
     RecipeRepository recipeRepository;
     @Autowired
-    UserService userService;
+    UserRepository userRepository;
 
     @Override
     public List<RecipeDto> findAll() {
@@ -59,9 +58,21 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeDto save(RecipeDto recipeDto) {
+    public RecipeDto saveOrUpdate(RecipeDto recipeDto) {
         Recipe recipe = DtoMapper.convert(recipeDto, Recipe.class);
         recipe = recipeRepository.saveAndFlush(recipe);
         return DtoMapper.convert(recipe, RecipeDto.class);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+        if (recipe.isPresent()) {
+            recipe.get().setAuthor(null);
+            recipe.get().setDate(null);
+            recipe.get().setIngredients(null);
+            recipe.get().setSteps(null);
+        }
+        recipeRepository.deleteById(id);
     }
 }
