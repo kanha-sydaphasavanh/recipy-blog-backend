@@ -50,4 +50,22 @@ public class UserController {
             return userService.saveOrUpdate(userDto);
         } else return null;
     }
+
+    @PutMapping(produces = "application/json", consumes = "application/json")
+    public ResponseEntity<?> update(@RequestBody UserDto userDto) {
+        if (userDto.getId() != 0) {
+            userService.saveOrUpdate(userDto);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("ERREUR UPDATE USER", HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity<?> deleteById(@PathVariable("id") long id) {
+        if (id != 0) {
+            userService.deleteById(id);
+            return new ResponseEntity<>("DELETE SUCCESS", HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new Exception("DELETE FAILED"), HttpStatus.BAD_REQUEST);
+    }
 }
