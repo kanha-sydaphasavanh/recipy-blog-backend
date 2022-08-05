@@ -18,16 +18,17 @@ public class UserDto {
     private List<RecipeDto> recipeDtoList;
 
     public UserDto(String email, String password, String fstName, String lastName) {
+        this();
         this.email = email;
         this.password = password;
         this.fstName = fstName;
         this.lastName = lastName;
-        adhesionDate = LocalDate.now();
-        roleDto = Role.USER;
-        recipeDtoList = new ArrayList<>();
     }
 
     public UserDto() {
+        adhesionDate = LocalDate.now();
+        roleDto = Role.USER;
+        recipeDtoList = new ArrayList<>();
     }
 
     public List<RecipeDto> getRecipeDtoList() {

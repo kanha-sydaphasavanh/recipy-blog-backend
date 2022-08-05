@@ -4,6 +4,7 @@ import fr.web.recipy.entities.enums.Role;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,7 +32,21 @@ public class User {
     public User() {
         adhesionDate = LocalDate.now();
         role = Role.USER;
+        recipes = new ArrayList<>();
     }
+
+    public User(String fstName, String lastName) {
+        this();
+        this.fstName = fstName;
+        this.lastName = lastName;
+    }
+
+    public User(String email, String password, String fstName, String lastName) {
+        this(fstName,lastName);
+        this.email = email;
+        this.password = password;
+    }
+
 
     @Override
     public String toString() {
