@@ -4,6 +4,7 @@ import fr.web.recipy.dto.RecipeDto;
 import fr.web.recipy.dto.UserDto;
 import fr.web.recipy.entities.enums.Role;
 import fr.web.recipy.services.UserService;
+import fr.web.recipy.tools.HashTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +25,14 @@ public class UserController {
     }
 
     @PostMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> save(@RequestBody UserDto userDto) throws Exception {
+
         if (userDto != null) {
             userService.saveOrUpdate(userDto);
             return new ResponseEntity<>(userDto, HttpStatus.OK);
         }
-        return new ResponseEntity<>("ERREUR CREATION USER", HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(new Exception().getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
@@ -43,7 +46,7 @@ public class UserController {
     }
 
     @GetMapping(produces = "application/json", value = "/insert-data")
-    public UserDto userCreateTest(UserDto userDto) {
+    public UserDto userCreateTest(UserDto userDto) throws Exception {
         if (userDto != null) {
             userDto = new UserDto("ksydaphasavanh@gmail.com", "pwd", "kanha", "sydaphasavanh");
             userDto.setRoleDto(Role.ADMIN);
@@ -52,7 +55,7 @@ public class UserController {
     }
 
     @PutMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> update(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> update(@RequestBody UserDto userDto) throws Exception {
         if (userDto.getId() != 0) {
             userService.saveOrUpdate(userDto);
             return new ResponseEntity<>(userDto, HttpStatus.OK);
@@ -68,4 +71,20 @@ public class UserController {
         }
         return new ResponseEntity<>(new Exception("DELETE FAILED"), HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping(produces = "application/json", value = "/find")
+    public ResponseEntity<?> findByEmail(@RequestParam("email") String email) {
+        UserDto userDto = userService.findByEmail(email);
+        if (userDto != null) {
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Email finding failed", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(value = "/insert-user", produces = "application/json")
+    public ResponseEntity<?> insertUser() {
+        UserDto userDto = userService.insertUser();
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
 }

@@ -2,7 +2,6 @@ package fr.web.recipy.services;
 
 import fr.web.recipy.dto.RecipeDto;
 import fr.web.recipy.dto.UserDto;
-import fr.web.recipy.entities.enums.Role;
 
 import java.util.List;
 
@@ -11,10 +10,15 @@ public interface UserService {
 
     UserDto findById(long id);
 
-    UserDto saveOrUpdate(UserDto userDto);
+    UserDto saveOrUpdate(UserDto userDto) throws Exception;
 
     void deleteById(long id);
 
+    UserDto findByEmail(String email);
+
     // User's recipes
     List<RecipeDto> findAllByAuthorId(long id);
+
+    // Jeu de donnée
+    UserDto insertUser();
 }
