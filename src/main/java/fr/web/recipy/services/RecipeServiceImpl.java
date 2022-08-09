@@ -53,7 +53,6 @@ public class RecipeServiceImpl implements RecipeService {
             recipeDto.setIngredientsDto(ingredients);
             recipeDto.setStepsDto(steps);
 
-
             User user = recipe.get().getAuthor();
             UserDto userDto = DtoTool.convert(user, UserDto.class);
             recipeDto.setAuthorDto(userDto);
@@ -72,7 +71,6 @@ public class RecipeServiceImpl implements RecipeService {
 
         recipe = recipeRepository.saveAndFlush(recipe);
         return DtoTool.convert(recipe, RecipeDto.class);
-//        return mapper.RecipeToRecipeDto(recipe);
     }
 
     @Override
