@@ -31,6 +31,7 @@ public class RecipeDto {
     }
 
     public RecipeDto(String title, UserDto authorDto, Category category, Difficulty difficulty, int nbPerson, float price, LocalTime cookingTime) {
+        this();
         this.title = title;
         this.authorDto = authorDto;
         this.category = category;
@@ -38,8 +39,6 @@ public class RecipeDto {
         this.nbPerson = nbPerson;
         this.price = price;
         this.cookingTime = cookingTime;
-        date = LocalDate.now();
-        isVisible = true;
     }
 
     @Override
@@ -124,22 +123,6 @@ public class RecipeDto {
     public void setPrice(float price) {
         this.price = price;
     }
-
-//    public List<IngredientDto> getIngredientsDto() {
-//        return ingredientsDto;
-//    }
-//
-//    public void setIngredientsDto(List<IngredientDto> ingredientsDto) {
-//        this.ingredientsDto = ingredientsDto;
-//    }
-//
-//    public List<StepDto> getStepsDto() {
-//        return stepsDto;
-//    }
-//
-//    public void setStepsDto(List<StepDto> stepsDto) {
-//        this.stepsDto = stepsDto;
-//    }
 
     public List<String> getIngredientsDto() {
         return ingredientsDto;
