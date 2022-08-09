@@ -10,7 +10,9 @@ public interface RecipeService {
 
     RecipeDto findById(long id);
 
-    RecipeDto saveOrUpdate(RecipeDto recipeDto);
+    RecipeDto saveOrUpdate(RecipeDto recipeDto) throws Exception;
 
     void deleteById(long id);
+
+    RecipeDto insertExample();
 }
