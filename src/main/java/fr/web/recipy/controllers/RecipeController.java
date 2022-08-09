@@ -29,22 +29,13 @@ public class RecipeController {
         return recipeService.findAll();
     }
 
-
-    @GetMapping(produces = "application/json", value = "/test")
-    public RecipeDto createTest(RecipeDto recipeDto) {
-        if (recipeDto != null) {
-            UserDto userDto = userService.findById(1);
-            recipeDto = new RecipeDto("recipeTest", userDto, Category.BOISSON, Difficulty.FACILE, 3, 15, LocalTime.of(0, 20, 0));
-//            recipeDto.setId(0);
-            recipeDto.setIngredientsDto(Arrays.asList("ingredient1", "ingredient2", "ingredient3"));
-            return recipeService.saveOrUpdate(recipeDto);
-        }
-        return null;
-    }
-
     @PostMapping(produces = "application/json", consumes = "application/json")
-    public RecipeDto save(@RequestBody RecipeDto recipeDto) {
-        return recipeService.saveOrUpdate(recipeDto);
+    public ResponseEntity<?> save(@RequestBody RecipeDto recipeDto) throws Exception {
+        if (recipeDto != null) {
+            recipeService.saveOrUpdate(recipeDto);
+            return new ResponseEntity<>(recipeDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new Exception().getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(produces = "application/json", value = "/{id}")
@@ -53,12 +44,12 @@ public class RecipeController {
     }
 
     @PutMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> update(@RequestBody RecipeDto recipeDto) {
+    public ResponseEntity<?> update(@RequestBody RecipeDto recipeDto) throws Exception {
         if (recipeDto != null) {
             recipeService.saveOrUpdate(recipeDto);
             return new ResponseEntity<>(recipeDto, HttpStatus.OK);
         }
-        return new ResponseEntity<>(new Exception("UPDATE FAILED"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new Exception().getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
@@ -68,6 +59,12 @@ public class RecipeController {
             return new ResponseEntity<>("DELETE SUCCESS", HttpStatus.OK);
         }
         return new ResponseEntity<>(new Exception("DELETE FAILED"), HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(value = "/insert-recipe", produces = "application/json")
+    public ResponseEntity<?> insertRecipe() {
+        recipeService.insertExample();
+        return new ResponseEntity<>("INSERT RECIPE SUCCESS", HttpStatus.OK);
     }
 }
 
