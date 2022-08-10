@@ -1,6 +1,6 @@
 package fr.web.recipy.interceptor;
 
-import fr.dawan.AppliCFABack.dto.APIError;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

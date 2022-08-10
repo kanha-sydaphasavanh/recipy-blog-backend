@@ -5,11 +5,10 @@ import fr.web.recipy.dto.LoginResponse;
 import fr.web.recipy.dto.UserDto;
 import fr.web.recipy.services.UserService;
 import fr.web.recipy.tools.HashTool;
-import fr.web.recipy.tools.TokenGenerator;
+import fr.web.recipy.tools.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,7 @@ public class LoginController {
     @Autowired
     private UserService userService;
     @Autowired
-    private TokenGenerator tokenGenerator;
+    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> login(@RequestBody Login login) {
@@ -41,7 +40,7 @@ public class LoginController {
             claim.put("firstName", userDto.getFstName());
             claim.put("lastName", userDto.getLastName());
             
-            String token = tokenGenerator.doGenerateToken(claim, userDto.getEmail());
+            String token = jwtTokenUtil.doGenerateToken(claim, userDto.getEmail());
 
             return new ResponseEntity<>(new LoginResponse(token), HttpStatus.OK);
 

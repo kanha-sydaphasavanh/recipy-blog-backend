@@ -1,6 +1,6 @@
 package fr.web.recipy.interceptor;
 
-import fr.dawan.AppliCFABack.tools.JwtTokenUtil;
+import fr.web.recipy.tools.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
