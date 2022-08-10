@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class TokenGenerator {
+public class JwtTokenUtil {
 
     /**
      *
