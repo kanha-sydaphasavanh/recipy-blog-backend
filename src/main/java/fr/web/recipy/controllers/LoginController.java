@@ -3,6 +3,8 @@ package fr.web.recipy.controllers;
 import fr.web.recipy.dto.Login;
 import fr.web.recipy.dto.LoginResponse;
 import fr.web.recipy.dto.UserDto;
+import fr.web.recipy.interceptor.TokenException;
+import fr.web.recipy.interceptor.TokenSaver;
 import fr.web.recipy.services.UserService;
 import fr.web.recipy.tools.HashTool;
 import fr.web.recipy.tools.JwtTokenUtil;
@@ -32,7 +34,7 @@ public class LoginController {
         if (userDto != null) {
             boolean checked = HashTool.checkPassword(login.getPassword(), userDto.getPassword());
             if (!checked)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("WRONG PASSWORD"));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TokenException("WRONG PASSWORD"));
 
             Map<String, Object> claim = new HashMap<>();
             claim.put("id", userDto.getId());
@@ -41,10 +43,11 @@ public class LoginController {
             claim.put("lastName", userDto.getLastName());
             
             String token = jwtTokenUtil.doGenerateToken(claim, userDto.getEmail());
+            TokenSaver.tokensByEmail.put(userDto.getEmail(),token);
 
             return new ResponseEntity<>(new LoginResponse(token), HttpStatus.OK);
 
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoginResponse("NO USER"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new TokenException("NO USER"));
     }
 }
