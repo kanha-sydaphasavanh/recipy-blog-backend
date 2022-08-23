@@ -28,6 +28,8 @@ public class User {
     private String description;
     @OneToMany(mappedBy = "author")
     private List<Recipe> recipes;
+    @Column
+    private String igPost;
 
     public User() {
         adhesionDate = LocalDate.now();
@@ -42,11 +44,10 @@ public class User {
     }
 
     public User(String email, String password, String fstName, String lastName) {
-        this(fstName,lastName);
+        this(fstName, lastName);
         this.email = email;
         this.password = password;
     }
-
 
     @Override
     public String toString() {
@@ -133,5 +134,12 @@ public class User {
 
     public void setRecipes(List<Recipe> recipes) {
         this.recipes = recipes;
+    }
+
+    public String getIgPost() {
+        return igPost;
+    }
+    public void setIgPost(String igPost) {
+        this.igPost = igPost;
     }
 }

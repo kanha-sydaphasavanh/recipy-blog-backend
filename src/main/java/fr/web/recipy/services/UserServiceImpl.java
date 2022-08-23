@@ -10,6 +10,8 @@ import fr.web.recipy.repositories.UserRepository;
 import fr.web.recipy.tools.DtoTool;
 import fr.web.recipy.tools.HashTool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -54,14 +56,17 @@ public class UserServiceImpl implements UserService {
     public UserDto saveOrUpdate(UserDto userDto) throws Exception {
         User user = DtoTool.convert(userDto, User.class);
         if (user != null) {
-            if (user.getId() == 0 && userRepository.findByEmail(user.getEmail()) != null)
-                throw new Exception("Email deja utilisé");
+            if (user.getId() == 0) {
+                if (userRepository.findByEmail(user.getEmail()) != null) {
+//                    throw new Exception("Email deja utilisé");
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email deja utilisé");
+                } else
+                    user.setPassword(HashTool.hashPassword(user.getPassword()));
+            } else
+                user.setPassword(HashTool.hashPassword(user.getPassword()));
 
-            user.setPassword(HashTool.hashPassword(user.getPassword()));
             userRepository.saveAndFlush(user);
-
-            userDto = DtoTool.convert(user, UserDto.class);
-            return userDto;
+            return DtoTool.convert(user, UserDto.class);
         } else {
             throw new Exception("ERREUR CREATION USER");
         }

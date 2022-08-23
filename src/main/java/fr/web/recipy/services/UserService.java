@@ -2,6 +2,8 @@ package fr.web.recipy.services;
 
 import fr.web.recipy.dto.RecipeDto;
 import fr.web.recipy.dto.UserDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 

@@ -49,8 +49,13 @@ public class UserController {
     public UserDto userCreateTest(UserDto userDto) throws Exception {
         if (userDto != null) {
             userDto = new UserDto("ksydaphasavanh@gmail.com", "pwd", "kanha", "sydaphasavanh");
-            userDto.setRoleDto(Role.ADMIN);
+            userService.saveOrUpdate(userDto);
+            userDto = userService.findById(userDto.getId());
+            if (userDto.getId() != 0 && userDto.getRoleDto() == Role.USER)
+                userDto.setRoleDto(Role.ADMIN);
+
             return userService.saveOrUpdate(userDto);
+
         } else return null;
     }
 
