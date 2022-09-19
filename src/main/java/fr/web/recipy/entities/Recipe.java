@@ -37,12 +37,12 @@ public class Recipe {
     private String image;
     @Column(nullable = false)
     private LocalDate date;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean isVisible;
 
     public Recipe() {
         date = LocalDate.now();
-        isVisible = true;
+//        isVisible = true;
     }
 
     @Override
