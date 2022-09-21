@@ -23,9 +23,7 @@ public class User {
     @Column
     private LocalDate adhesionDate;
     @Column
-    private Role role;
-    @Column
-    private String description;
+    private Role role = Role.USER;
     @OneToMany(mappedBy = "author")
     private List<Recipe> recipes;
     @Column
@@ -33,7 +31,6 @@ public class User {
 
     public User() {
         adhesionDate = LocalDate.now();
-        role = Role.USER;
         recipes = new ArrayList<>();
     }
 
@@ -59,7 +56,6 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", adhesionDate=" + adhesionDate +
                 ", role=" + role +
-                ", description='" + description + '\'' +
                 ", recipes=" + recipes +
                 '}';
     }
@@ -118,14 +114,6 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<Recipe> getRecipes() {
