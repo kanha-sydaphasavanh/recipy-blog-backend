@@ -22,5 +22,5 @@ public interface UserService {
     List<RecipeDto> findAllByAuthorId(long id);
 
     // Jeu de donnée
-    UserDto insertUser();
+    UserDto insertUser() throws Exception;
 }
