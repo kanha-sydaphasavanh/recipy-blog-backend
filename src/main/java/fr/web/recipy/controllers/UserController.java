@@ -25,14 +25,12 @@ public class UserController {
     }
 
     @PostMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody UserDto userDto) throws Exception {
+    public UserDto save(@RequestBody UserDto userDto) throws Exception {
 
-        if (userDto != null) {
-            userService.saveOrUpdate(userDto);
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
-        }
+        if (userDto != null)
+            return userService.saveOrUpdate(userDto);
 
-        return new ResponseEntity<>(new Exception().getMessage(), HttpStatus.BAD_REQUEST);
+        return null;
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
@@ -46,24 +44,19 @@ public class UserController {
     }
 
     @GetMapping(produces = "application/json", value = "/insert-data")
-    public UserDto userCreateTest(UserDto userDto) throws Exception {
-        if (userDto != null) {
-            userDto = new UserDto("ksydaphasavanh@gmail.com", "pwd", "kanha", "sydaphasavanh");
-            userService.saveOrUpdate(userDto);
-            userDto = userService.findById(userDto.getId());
-            if (userDto.getId() != 0 && userDto.getRoleDto() == Role.USER)
-                userDto.setRoleDto(Role.ADMIN);
-
+    public UserDto userCreateTest() throws Exception {
+        UserDto userDto = new UserDto("ksydaphasavanh@gmail.com", "pwd", "kanha", "sydaphasavanh");
+        if (userDto != null)
             return userService.saveOrUpdate(userDto);
 
-        } else return null;
+        return null;
     }
 
     @PutMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<?> update(@RequestBody UserDto userDto) throws Exception {
         if (userDto.getId() != 0) {
             userService.saveOrUpdate(userDto);
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
+            return new ResponseEntity<>("UPDATE OK", HttpStatus.OK);
         }
         return new ResponseEntity<>("ERREUR UPDATE USER", HttpStatus.BAD_REQUEST);
     }
@@ -83,11 +76,11 @@ public class UserController {
         if (userDto != null) {
             return new ResponseEntity<>(userDto, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Email finding failed", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("FINDING EMAIL FAILED", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/insert-user", produces = "application/json")
-    public ResponseEntity<?> insertUser() {
+    public ResponseEntity<?> insertUser() throws Exception {
         UserDto userDto = userService.insertUser();
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
