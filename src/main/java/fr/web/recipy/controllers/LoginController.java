@@ -34,7 +34,7 @@ public class LoginController {
         if (userDto != null) {
             boolean checked = HashTool.checkPassword(login.getPassword(), userDto.getPassword());
             if (!checked)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TokenException("WRONG PASSWORD"));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TokenException("WRONG PASSWORD").getMessage());
 
             Map<String, Object> claim = new HashMap<>();
             claim.put("id", userDto.getId());
@@ -48,6 +48,6 @@ public class LoginController {
             return new ResponseEntity<>(new LoginResponse(token), HttpStatus.OK);
 
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new TokenException("NO USER"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new TokenException("NO USER").getMessage());
     }
 }
