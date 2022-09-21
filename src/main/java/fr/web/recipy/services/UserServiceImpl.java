@@ -10,9 +10,8 @@ import fr.web.recipy.repositories.UserRepository;
 import fr.web.recipy.tools.DtoTool;
 import fr.web.recipy.tools.HashTool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     @Autowired
     RecipeRepository recipeRepository;
-
 
     @Override
     public List<UserDto> findAll() {
@@ -55,21 +53,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto saveOrUpdate(UserDto userDto) throws Exception {
         User user = DtoTool.convert(userDto, User.class);
-        if (user != null) {
-            if (user.getId() == 0) {
-                if (userRepository.findByEmail(user.getEmail()) != null) {
-//                    throw new Exception("Email deja utilisé");
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email deja utilisé");
-                } else
-                    user.setPassword(HashTool.hashPassword(user.getPassword()));
-            } else
-                user.setPassword(HashTool.hashPassword(user.getPassword()));
+        if (user != null) { // SI contient objet
+            if (user.getId() == 0 && userRepository.findByEmail(user.getEmail()) != null)
+                throw new Exception("EMAIL ALREADY USED !!");
 
-            userRepository.saveAndFlush(user);
-            return DtoTool.convert(user, UserDto.class);
-        } else {
-            throw new Exception("ERREUR CREATION USER");
+            try {
+                user.setPassword(HashTool.hashPassword(user.getPassword()));
+                userRepository.saveAndFlush(user);
+                return DtoTool.convert(user, UserDto.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
+        throw new Exception("ERROR CREATE USER");
     }
 
     @Override
@@ -78,7 +75,7 @@ public class UserServiceImpl implements UserService {
         if (userDto != null) { // Si userDto different de null
             User user = DtoTool.convert(userDto, User.class); // On recup le UserDto et on le converti en User
             List<Recipe> recipes = recipeRepository.findAllByAuthorId(user.getId()); // recup le recette du user
-            if (recipes.size() > 0) { // si recettes > 0
+            if (recipes.size() > 0) { // si nb recettes > 0
                 for (Recipe recipe : recipes) { // Supprime les recettes du user
                     recipeRepository.deleteById(recipe.getId());
                 }
@@ -113,17 +110,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto insertUser() {
-        UserDto userDto = new UserDto();
+    public UserDto insertUser() throws Exception {
+        UserDto userDto;
         try {
             User user = new User("test@test.com", HashTool.hashPassword("pwd123"), "SIGAL", "STIVEN");
-            Role roleDto = user.getRole();
             userDto = DtoTool.convert(user, UserDto.class);
-            userDto.setRoleDto(roleDto);
-            saveOrUpdate(userDto);
+            return saveOrUpdate(userDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return userDto;
+        throw new Exception("ERROR INSERT USER");
     }
 }
