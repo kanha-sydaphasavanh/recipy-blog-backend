@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             Role role = user.get().getRole();
             UserDto userDto = DtoTool.convert(user.get(), UserDto.class);
-            userDto.setRoleDto(role);
+            userDto.setRole(role);
             return userDto;
         }
         return null;
@@ -54,19 +54,44 @@ public class UserServiceImpl implements UserService {
     public UserDto saveOrUpdate(UserDto userDto) throws Exception {
         User user = DtoTool.convert(userDto, User.class);
         if (user != null) { // SI contient objet
-            if (user.getId() == 0 && userRepository.findByEmail(user.getEmail()) != null)
-                throw new Exception("EMAIL ALREADY USED !!");
-
             try {
-                user.setPassword(HashTool.hashPassword(user.getPassword()));
-                userRepository.saveAndFlush(user);
-                return DtoTool.convert(user, UserDto.class);
+                if (user.getId() == 0) { // SI user existe pas
+                    if (userRepository.findByEmail(user.getEmail()) != null)
+                        throw new Exception("EMAIL NOT DEFINED OR ALREADY USED");
+                    if (user.getPassword().equals(""))
+                        throw new Exception("PASSWORD NOT DEFINED");
+                    else
+                        user.setPassword(HashTool.hashPassword(user.getPassword()));
+
+                    if(userDto.getRole() == null)
+                        user.setRole(Role.USER);
+
+                    user.setRole(userDto.getRole());
+                    userRepository.saveAndFlush(user);
+
+                    userDto = DtoTool.convert(user, UserDto.class);
+                }
+
+                if (user.getId() != 0) { // SI user existe
+                    user = getById(user.getId());
+                    if (userDto.getPassword() == null) // SI mdp pas definis => on garde le meme
+                        user.setPassword(user.getPassword());
+                    else // SINON => crypt mdp
+                        user.setPassword(HashTool.hashPassword(userDto.getPassword())); // crypt nouv mdp
+
+                    user.setRole(userDto.getRole());
+                    userRepository.saveAndFlush(user);
+
+                    userDto = DtoTool.convert(user, UserDto.class);
+                }
+
+                return userDto;
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-        throw new Exception("ERROR CREATE USER");
+        throw new Exception("ERROR CREATE USER"); // MAYBE : remplacer par return null
     }
 
     @Override
@@ -120,5 +145,10 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
         }
         throw new Exception("ERROR INSERT USER");
+    }
+
+    public User getById(long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.get();
     }
 }
