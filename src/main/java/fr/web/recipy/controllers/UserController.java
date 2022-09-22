@@ -2,13 +2,12 @@ package fr.web.recipy.controllers;
 
 import fr.web.recipy.dto.RecipeDto;
 import fr.web.recipy.dto.UserDto;
+import fr.web.recipy.entities.User;
 import fr.web.recipy.entities.enums.Role;
 import fr.web.recipy.services.UserService;
-import fr.web.recipy.tools.HashTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +28,6 @@ public class UserController {
 
         if (userDto != null)
             return userService.saveOrUpdate(userDto);
-
         return null;
     }
 
@@ -43,22 +41,21 @@ public class UserController {
         return userService.findAllByAuthorId(id);
     }
 
-    @GetMapping(produces = "application/json", value = "/insert-data")
+    @GetMapping(produces = "application/json", value = "/insert-admin")
     public UserDto userCreateTest() throws Exception {
         UserDto userDto = new UserDto("ksydaphasavanh@gmail.com", "pwd", "kanha", "sydaphasavanh");
-        if (userDto != null)
-            return userService.saveOrUpdate(userDto);
+        userDto.setRole(Role.ADMIN);
 
-        return null;
+        return userService.saveOrUpdate(userDto);
     }
 
     @PutMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> update(@RequestBody UserDto userDto) throws Exception {
+    public UserDto update(@RequestBody UserDto userDto) throws Exception {
         if (userDto.getId() != 0) {
-            userService.saveOrUpdate(userDto);
-            return new ResponseEntity<>("UPDATE OK", HttpStatus.OK);
+            return userService.saveOrUpdate(userDto);
         }
-        return new ResponseEntity<>("ERREUR UPDATE USER", HttpStatus.BAD_REQUEST);
+        throw new Exception("ERREUR UPDATE USER");
+
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
