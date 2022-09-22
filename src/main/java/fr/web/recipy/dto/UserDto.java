@@ -2,7 +2,6 @@ package fr.web.recipy.dto;
 
 import fr.web.recipy.entities.enums.Role;
 
-import javax.persistence.Column;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +13,9 @@ public class UserDto {
     private String fstName;
     private String lastName;
     private LocalDate adhesionDate;
-    private Role roleDto;
-    private List<RecipeDto> recipeDtoList;
+    private Role role;
+    private List<RecipeDto> recipesDto;
+    private String igPost;
 
     public UserDto(String email, String password, String fstName, String lastName) {
         this();
@@ -27,16 +27,15 @@ public class UserDto {
 
     public UserDto() {
         adhesionDate = LocalDate.now();
-        roleDto = Role.USER;
-        recipeDtoList = new ArrayList<>();
+        recipesDto = new ArrayList<>();
     }
 
-    public List<RecipeDto> getRecipeDtoList() {
-        return recipeDtoList;
+    public List<RecipeDto> getRecipesDto() {
+        return recipesDto;
     }
 
-    public void setRecipeDtoList(List<RecipeDto> recipeDtoList) {
-        this.recipeDtoList = recipeDtoList;
+    public void setRecipesDto(List<RecipeDto> recipesDto) {
+        this.recipesDto = recipesDto;
     }
 
     public long getId() {
@@ -87,14 +86,21 @@ public class UserDto {
         this.adhesionDate = adhesionDate;
     }
 
-    public Role getRoleDto() {
-        return roleDto;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleDto(Role roleDto) {
-        this.roleDto = roleDto;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
+    public String getIgPost() {
+        return igPost;
+    }
+
+    public void setIgPost(String igPost) {
+        this.igPost = igPost;
+    }
 
     @Override
     public String toString() {
@@ -105,8 +111,8 @@ public class UserDto {
                 ", fstName='" + fstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", adhesionDate=" + adhesionDate +
-                ", roleDto=" + roleDto +
-                ", recipeDtoList=" + recipeDtoList +
+                ", roleDto=" + role +
+                ", recipesDto=" + recipesDto +
                 '}';
     }
 }

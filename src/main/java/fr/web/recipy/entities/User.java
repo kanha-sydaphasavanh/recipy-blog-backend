@@ -23,7 +23,7 @@ public class User {
     @Column
     private LocalDate adhesionDate;
     @Column
-    private Role role = Role.USER;
+    private Role role;
     @OneToMany(mappedBy = "author")
     private List<Recipe> recipes;
     @Column
