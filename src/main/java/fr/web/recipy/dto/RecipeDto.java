@@ -1,13 +1,11 @@
 package fr.web.recipy.dto;
 
-import fr.web.recipy.entities.User;
 import fr.web.recipy.entities.enums.Category;
 import fr.web.recipy.entities.enums.Difficulty;
+import fr.web.recipy.entities.enums.Status;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeDto {
@@ -23,11 +21,9 @@ public class RecipeDto {
     private List<String> stepsDto;
     private String image;
     private LocalDate date;
-    private Boolean isVisible;
-
+    private Status status;
     public RecipeDto() {
         date = LocalDate.now();
-        isVisible = true;
     }
 
     public RecipeDto(String title, UserDto authorDto, Category category, Difficulty difficulty, int nbPerson, float price, LocalTime cookingTime) {
@@ -56,7 +52,7 @@ public class RecipeDto {
                 ", stepsDto=" + stepsDto +
                 ", image='" + image + '\'' +
                 ", date=" + date +
-                ", isVisible=" + isVisible +
+                ", status=" + status +
                 '}';
     }
 
@@ -156,11 +152,12 @@ public class RecipeDto {
         this.date = date;
     }
 
-    public Boolean getVisible() {
-        return isVisible;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setVisible(Boolean visible) {
-        isVisible = visible;
+    public void setStatus(Status status) {
+        this.status = status;
     }
+
 }

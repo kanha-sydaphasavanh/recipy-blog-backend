@@ -17,7 +17,7 @@ public class User {
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
-    private String fstName;
+    private String firstName;
     @Column(nullable = false)
     private String lastName;
     @Column
@@ -26,22 +26,20 @@ public class User {
     private Role role;
     @OneToMany(mappedBy = "author")
     private List<Recipe> recipes;
-    @Column
-    private String igPost;
+
 
     public User() {
-        adhesionDate = LocalDate.now();
         recipes = new ArrayList<>();
     }
 
-    public User(String fstName, String lastName) {
+    public User(String firstName, String lastName) {
         this();
-        this.fstName = fstName;
+        this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public User(String email, String password, String fstName, String lastName) {
-        this(fstName, lastName);
+    public User(String email, String password, String firstName, String lastName) {
+        this(firstName, lastName);
         this.email = email;
         this.password = password;
     }
@@ -52,7 +50,7 @@ public class User {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", fstName='" + fstName + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", adhesionDate=" + adhesionDate +
                 ", role=" + role +
@@ -84,12 +82,12 @@ public class User {
         this.password = password;
     }
 
-    public String getFstName() {
-        return fstName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFstName(String fstName) {
-        this.fstName = fstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -124,10 +122,4 @@ public class User {
         this.recipes = recipes;
     }
 
-    public String getIgPost() {
-        return igPost;
-    }
-    public void setIgPost(String igPost) {
-        this.igPost = igPost;
-    }
 }

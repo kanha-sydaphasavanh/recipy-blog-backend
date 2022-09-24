@@ -10,23 +10,21 @@ public class UserDto {
     private long id;
     private String email;
     private String password;
-    private String fstName;
+    private String firstName;
     private String lastName;
     private LocalDate adhesionDate;
     private Role role;
     private List<RecipeDto> recipesDto;
-    private String igPost;
 
-    public UserDto(String email, String password, String fstName, String lastName) {
+    public UserDto(String email, String password, String firstName, String lastName) {
         this();
         this.email = email;
         this.password = password;
-        this.fstName = fstName;
+        this.firstName = firstName;
         this.lastName = lastName;
     }
 
     public UserDto() {
-        adhesionDate = LocalDate.now();
         recipesDto = new ArrayList<>();
     }
 
@@ -62,12 +60,12 @@ public class UserDto {
         this.password = password;
     }
 
-    public String getFstName() {
-        return fstName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFstName(String fstName) {
-        this.fstName = fstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -94,24 +92,16 @@ public class UserDto {
         this.role = role;
     }
 
-    public String getIgPost() {
-        return igPost;
-    }
-
-    public void setIgPost(String igPost) {
-        this.igPost = igPost;
-    }
-
     @Override
     public String toString() {
         return "UserDto{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", fstName='" + fstName + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", adhesionDate=" + adhesionDate +
-                ", roleDto=" + role +
+                ", role=" + role +
                 ", recipesDto=" + recipesDto +
                 '}';
     }

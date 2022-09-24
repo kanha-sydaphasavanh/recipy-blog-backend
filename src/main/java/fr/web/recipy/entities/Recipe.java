@@ -2,6 +2,7 @@ package fr.web.recipy.entities;
 
 import fr.web.recipy.entities.enums.Category;
 import fr.web.recipy.entities.enums.Difficulty;
+import fr.web.recipy.entities.enums.Status;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -37,12 +38,11 @@ public class Recipe {
     private String image;
     @Column(nullable = false)
     private LocalDate date;
-    @Column(nullable = false, columnDefinition = "boolean default true")
-    private Boolean isVisible;
+    @Column
+    private Status status;
 
     public Recipe() {
         date = LocalDate.now();
-//        isVisible = true;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class Recipe {
                 ", steps=" + steps +
                 ", image='" + image + '\'' +
                 ", date=" + date +
-                ", isVisible=" + isVisible +
+                ", status=" + status +
                 '}';
     }
 
@@ -160,11 +160,12 @@ public class Recipe {
         this.date = date;
     }
 
-    public Boolean getVisible() {
-        return isVisible;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setVisible(Boolean visible) {
-        isVisible = visible;
+    public void setStatus(Status status) {
+        this.status = status;
     }
+
 }
