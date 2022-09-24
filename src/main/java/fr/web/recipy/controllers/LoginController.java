@@ -39,7 +39,7 @@ public class LoginController {
             Map<String, Object> claim = new HashMap<>();
             claim.put("id", userDto.getId());
             claim.put("email", userDto.getEmail());
-            claim.put("firstName", userDto.getFstName());
+            claim.put("firstName", userDto.getFirstName());
             claim.put("lastName", userDto.getLastName());
             
             String token = jwtTokenUtil.doGenerateToken(claim, userDto.getEmail());

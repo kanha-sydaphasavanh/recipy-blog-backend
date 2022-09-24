@@ -29,28 +29,37 @@ public class RecipeController {
         return recipeService.findAll();
     }
 
-    @PostMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody RecipeDto recipeDto) throws Exception {
-        if (recipeDto != null) {
-            recipeService.saveOrUpdate(recipeDto);
-            return new ResponseEntity<>(recipeDto, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(new Exception().getMessage(), HttpStatus.BAD_REQUEST);
-    }
+//    @PostMapping(produces = "application/json", consumes = "application/json")
+//    public ResponseEntity<?> save(@RequestBody RecipeDto recipeDto) throws Exception {
+//        if (recipeDto != null) {
+//            recipeService.saveOrUpdate(recipeDto);
+//            return new ResponseEntity<>(recipeDto, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(new Exception().getMessage(), HttpStatus.BAD_REQUEST);
+//    }
+
+//    @PostMapping(path = "/{idUser}/create", produces = "application/json", consumes = "application/json")
+//    public ResponseEntity<?> save(@PathVariable("idUSer") long idUser, @RequestBody RecipeDto recipeDto) throws Exception {
+//        if (recipeDto != null) {
+//            recipeService.saveOrUpdate(idUser, recipeDto);
+//            return ResponseEntity.status(HttpStatus.OK).body(recipeDto);
+//        }
+//        return null;
+//    }
 
     @GetMapping(produces = "application/json", value = "/{id}")
     public RecipeDto findById(@PathVariable("id") long id) {
         return recipeService.findById(id);
     }
 
-    @PutMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<?> update(@RequestBody RecipeDto recipeDto) throws Exception {
-        if (recipeDto != null) {
-            recipeService.saveOrUpdate(recipeDto);
-            return new ResponseEntity<>(recipeDto, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(new Exception().getMessage(), HttpStatus.BAD_REQUEST);
-    }
+//    @PutMapping(value = "/{idUSer}/update", produces = "application/json", consumes = "application/json")
+//    public ResponseEntity<?> update(@PathVariable("idUSer") long idUser, @RequestBody RecipeDto recipeDto) throws Exception {
+//        if (recipeDto != null) {
+//            recipeService.saveOrUpdate(idUser, recipeDto);
+//            return new ResponseEntity<>(recipeDto, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(new Exception().getMessage(), HttpStatus.BAD_REQUEST);
+//    }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<?> deleteById(@PathVariable("id") long id) {
@@ -66,5 +75,11 @@ public class RecipeController {
         recipeService.insertExample();
         return new ResponseEntity<>("INSERT RECIPE SUCCESS", HttpStatus.OK);
     }
+
+    @GetMapping(value = "/{id}/validate", produces = "application/json")
+    public ResponseEntity<?> changeStatus(@PathVariable("id") long id, @RequestParam("status") int status) {
+        RecipeDto recipeDto = recipeService.changeStatus(id, status);
+        return ResponseEntity.status(HttpStatus.OK).body("NEW STATUS : " + recipeDto.getStatus() + "\n" + "RECIPE ID : " + recipeDto.getId());
+    } // MAYBE : change return method
 }
 
