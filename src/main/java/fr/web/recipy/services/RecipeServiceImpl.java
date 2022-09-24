@@ -6,7 +6,9 @@ import fr.web.recipy.entities.Recipe;
 import fr.web.recipy.entities.User;
 import fr.web.recipy.entities.enums.Category;
 import fr.web.recipy.entities.enums.Difficulty;
+import fr.web.recipy.entities.enums.Status;
 import fr.web.recipy.repositories.RecipeRepository;
+import fr.web.recipy.repositories.UserRepository;
 import fr.web.recipy.tools.DtoTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,8 +25,8 @@ import java.util.Optional;
 public class RecipeServiceImpl implements RecipeService {
     @Autowired
     RecipeRepository recipeRepository;
-    //    @Autowired
-//    UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     UserService userService;
 
@@ -64,13 +66,25 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public RecipeDto saveOrUpdate(RecipeDto recipeDto) throws Exception {
-        Recipe recipe = DtoTool.convert(recipeDto, Recipe.class);
-        if (recipe.getAuthor() == null)
-            throw new Exception("aucun autheur de la recette");
+    public RecipeDto saveOrUpdate(long idUser, RecipeDto recipeDto) throws Exception {
+        Optional<User> user = userRepository.findById(idUser); // recup id du user
+        if (user.isPresent() && recipeDto != null) { // SI user et recipe en req
+            try {
+                Recipe recipe = DtoTool.convert(recipeDto, Recipe.class);
+                recipe.setAuthor(user.get()); // author = USER (EMAIL ? LASTNAME - FIRSTNAME ?)
 
-        recipe = recipeRepository.saveAndFlush(recipe);
-        return DtoTool.convert(recipe, RecipeDto.class);
+                if (recipe.getIngredients().size() < 1 && recipe.getSteps().size() < 1)
+                    throw new Exception("ADD AT LEAST 1 INGREDIENT AND 1 STEP");
+                if (recipe.getStatus() == null && recipe.getId() == 0)
+                    recipe.setStatus(Status.PENDING); // make status constant on UI if not null
+
+                recipeRepository.saveAndFlush(recipe);
+                return DtoTool.convert(recipe, RecipeDto.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        throw new Exception("ERROR CREATION");
     }
 
     @Override
@@ -88,6 +102,8 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public void insertExample() {
         Recipe recipe = new Recipe();
+        Optional<User> user = userRepository.findById(1L); // Definis autheur en le recup dans la BDD avc findById (Si pas de user en BDD => lancer jeu de test du User)
+
         try {
             recipe.setTitle("Tomate mozarella");
             recipe.setCategory(Category.ENTREE);
@@ -104,8 +120,6 @@ public class RecipeServiceImpl implements RecipeService {
             // Convertion Recipe en RecipeDto
             RecipeDto recipeDto = DtoTool.convert(recipe, RecipeDto.class);
 
-            // Definis autheur en le recup dans la BDD avc findById (Si pas de user en BDD => lancer jeu de test du User)
-            recipeDto.setAuthorDto(userService.findById(1));
 
             // Recupere les ingredients puis convertis en DTO
             List<String> ingredients = recipe.getIngredients();
@@ -123,9 +137,40 @@ public class RecipeServiceImpl implements RecipeService {
 
             recipeDto.setIngredientsDto(ingredientsDto); // Ajoute les ingredients
             recipeDto.setStepsDto(stepsDto); // Ajoute les steps
-            saveOrUpdate(recipeDto);
+            recipeDto.setStatus(Status.PENDING); // definis par defaut status PENDING
+            saveOrUpdate(user.get().getId(), recipeDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public RecipeDto changeStatus(long idRecipe, int status) {
+        RecipeDto recipeDto = findById(idRecipe);
+        switch (status) {
+            default:
+            case 2:
+                recipeDto.setStatus(Status.PENDING);
+                break;
+            case 1:
+                recipeDto.setStatus(Status.REJECTED);
+                break;
+            case 0:
+                recipeDto.setStatus(Status.CONFIRMED);
+                break;
+        }
+//        TODO : on ui create combobox with status : if status CONFIRMED => set visible if rejected => send notify else do nothing
+        recipeRepository.saveAndFlush(DtoTool.convert(recipeDto, Recipe.class));
+        return recipeDto;
+    }
+
+    public Recipe getId(long id) {
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+        if (recipe.isPresent())
+            return recipe.get();
+        return null;
+    }
+
+
 }
+

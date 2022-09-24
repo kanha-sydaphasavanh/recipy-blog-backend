@@ -23,4 +23,6 @@ public interface UserService {
 
     // Jeu de donnée
     UserDto insertUser() throws Exception;
+
+    RecipeDto saveOrUpdate(long idUser,RecipeDto recipeDto) throws Exception;
 }

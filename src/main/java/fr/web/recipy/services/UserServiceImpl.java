@@ -5,6 +5,7 @@ import fr.web.recipy.dto.UserDto;
 import fr.web.recipy.entities.Recipe;
 import fr.web.recipy.entities.User;
 import fr.web.recipy.entities.enums.Role;
+import fr.web.recipy.entities.enums.Status;
 import fr.web.recipy.repositories.RecipeRepository;
 import fr.web.recipy.repositories.UserRepository;
 import fr.web.recipy.tools.DtoTool;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,10 +54,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto saveOrUpdate(UserDto userDto) throws Exception {
-        User user = DtoTool.convert(userDto, User.class);
-        if (user != null) { // SI contient objet
+        User user;
+        if (userDto != null) { // SI contient objet
             try {
-                if (user.getId() == 0) { // SI user existe pas
+                if (userDto.getId() == 0) { // SI user existe pas
+                    user = DtoTool.convert(userDto, User.class);
                     if (userRepository.findByEmail(user.getEmail()) != null)
                         throw new Exception("EMAIL NOT DEFINED OR ALREADY USED");
                     if (user.getPassword().equals(""))
@@ -63,26 +66,44 @@ public class UserServiceImpl implements UserService {
                     else
                         user.setPassword(HashTool.hashPassword(user.getPassword()));
 
-                    if(userDto.getRole() == null)
+                    if (userDto.getRole() == null)
                         user.setRole(Role.USER);
 
+                    user.setAdhesionDate(LocalDate.now());
                     user.setRole(userDto.getRole());
                     userRepository.saveAndFlush(user);
 
                     userDto = DtoTool.convert(user, UserDto.class);
                 }
 
-                if (user.getId() != 0) { // SI user existe
-                    user = getById(user.getId());
-                    if (userDto.getPassword() == null) // SI mdp pas definis => on garde le meme
-                        user.setPassword(user.getPassword());
-                    else // SINON => crypt mdp
-                        user.setPassword(HashTool.hashPassword(userDto.getPassword())); // crypt nouv mdp
+                if (userDto.getId() != 0) { // SI user existe
+                    user = getById(userDto.getId()); // recup un user
+                    if (userDto.getPassword() == null) { // si mdp de la req pas definis
+                        userDto.setPassword(user.getPassword()); // prend le mdp du user recup
+                        System.out.println("PASSWORD NOT CHANGED");
+                    } else { // SINON
+                        userDto.setPassword(HashTool.hashPassword(userDto.getPassword())); // crypt nv mdp
+                        System.out.println("PASSWORD CHANGED");
+                    }
 
-                    user.setRole(userDto.getRole());
+                    userDto.setAdhesionDate(user.getAdhesionDate());
+                    userDto.setRole(user.getRole());
+                    user = DtoTool.convert(userDto, User.class);
                     userRepository.saveAndFlush(user);
-
                     userDto = DtoTool.convert(user, UserDto.class);
+
+
+//                    user = getById(userDto.getId()); // recup un user par son id
+//                    if (userDto.getPassword() == null) { // SI mdp dns la req pas definis => on garde le meme
+//                        user.setPassword(user.getPassword());
+//                    } else // SINON => crypt mdp
+//                        user.setPassword(HashTool.hashPassword(userDto.getPassword())); // crypt nouv mdp
+//
+//                    user.setAdhesionDate(user.getAdhesionDate());
+//                    user.setRole(userDto.getRole());
+//                    userRepository.saveAndFlush(user);
+//
+//                    userDto = DtoTool.convert(user, UserDto.class);
                 }
 
                 return userDto;
@@ -145,6 +166,28 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
         }
         throw new Exception("ERROR INSERT USER");
+    }
+
+    @Override
+    public RecipeDto saveOrUpdate(long idUser, RecipeDto recipeDto) throws Exception {
+        Optional<User> user = userRepository.findById(idUser); // recup id du user
+        if (user.isPresent() && recipeDto != null) { // SI user et recipe en req
+            try {
+                Recipe recipe = DtoTool.convert(recipeDto, Recipe.class);
+                recipe.setAuthor(user.get()); // MAYBE : author = USER => EMAIL ? LASTNAME - FIRSTNAME ?
+
+                if (recipe.getIngredients().size() < 1 && recipe.getSteps().size() < 1) // SI nb step + ingredient < 1
+                    throw new Exception("ADD AT LEAST 1 INGREDIENT AND 1 STEP");
+                if (recipe.getStatus() == null && recipe.getId() == 0) // SI status pas definis && recipe existe pas
+                    recipe.setStatus(Status.PENDING); // make status constant on UI if not null
+
+                recipeRepository.saveAndFlush(recipe);
+                return DtoTool.convert(recipe, RecipeDto.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        throw new Exception("ERROR CREATION");
     }
 
     public User getById(long id) {
